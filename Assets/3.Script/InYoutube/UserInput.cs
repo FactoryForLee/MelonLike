@@ -17,4 +17,9 @@ public class UserInput : MonoBehaviour
         touchPositionAction = playerInput.actions["TouchPosition"];
         touchPressAction = playerInput.actions["TouchPress"];
     }
+
+    public static Vector2 GetConvertedTouchPos()
+    {
+        return Camera.main.ScreenToWorldPoint(touchPositionAction.ReadValue<Vector2>());
+    }
 }

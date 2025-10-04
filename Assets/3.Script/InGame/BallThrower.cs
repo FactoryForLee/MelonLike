@@ -4,29 +4,30 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
-public class BallThrower : ObjectPooling<Poolobj>
+public class BallThrower : MonoBehaviour
 {
-    //Unity Components=================
-
-    [SerializeField] private LineRenderer dotLine;
+    //Preference=======================
+    [SerializeField] private Transform ballSpawnPoint;
     [SerializeField] private Transform arrow;
+    [SerializeField] private TrajectoryLine lineDrawer;
+
+    public Ball ball { get; private set; }
 
     //=================================
 
+
     //Project Variables================
-    [SerializeField]private EBallColor color;
-
-    public Vector2 startedTouchPos { get; private set; }
-
-    private List<Poolobj> allLines;
+    public Vector2 ballSpawnPos { get; private set; }
     //=================================
 
     private void OnEnable()
     {
+        ball = GetComponent<Ball>();
+        arrow.gameObject.SetActive(false);
         UserInput.touchPressAction.started += TouchStarted;
         UserInput.touchPositionAction.performed += TouchPerformed;
         UserInput.touchPressAction.canceled += TouchCanceled;
-
+        ballSpawnPos = (Vector2)ballSpawnPoint.position;
         Debug.Log("바인딩 완료");
     }
 
@@ -40,7 +41,7 @@ public class BallThrower : ObjectPooling<Poolobj>
     private void TouchStarted(InputAction.CallbackContext context)
     {
         arrow.gameObject.SetActive(true);
-        startedTouchPos = context.ReadValue<Vector2>();
+        lineDrawer.StartDraw();
         Debug.Log("터치 시작");
     }
 
@@ -48,57 +49,19 @@ public class BallThrower : ObjectPooling<Poolobj>
     {
         if (arrow.gameObject.activeSelf)
         {
-            Vector2 performedTouchPos = context.ReadValue<Vector2>();
-            DrawLine(startedTouchPos, performedTouchPos);
+            Vector2 performedTouchPos = UserInput.GetConvertedTouchPos();
+
+            Vector2 dir = ballSpawnPos - performedTouchPos;
+            float sqrMag = dir.sqrMagnitude;
+            lineDrawer.Draw(sqrMag, performedTouchPos);
         }
     }
 
     private void TouchCanceled(InputAction.CallbackContext context)
     {
+        //dir의 magnitude < 0.1f면 쏘지 않기
+        //else 쏘기
+        lineDrawer.StopDraw();
         arrow.gameObject.SetActive(false);
-        foreach(Poolobj line in allLines)
-            line.gameObject.SetActive(false);
-    }
-
-
-    private void DrawLine(Vector2 startTouchPos,Vector2 curTouchPos)
-    {
-        /*
-         * dir = cur - start;
-         * dir 방향을 arrow 방향으로
-         * dir의 반대 방향을 line 방향으로
-         */
-
-        Vector2 dir = curTouchPos - startTouchPos;
-        arrow.forward = dir;
-
-
-        DrawDot();
-        dotLine.positionCount++;
-        dotLine.SetPosition(dotLine.positionCount - 1, curTouchPos);
-    }
-
-    private void DrawDot()
-    {
-        Poolobj drawing = GetObject();
-        dotLine = drawing.GetComponent<LineRenderer>();
-        dotLine.startWidth = 0.15f;
-        dotLine.endWidth = 0.15f;
-    }
-
-
-    //TODO[이준형]: 콜라이더 이용한 머지 구현 필요
-    //private void OnTriggerEnter2D(Collider2D collision)
-    //{
-    //    if (collision.gameObject.layer == gameObject.layer &&
-    //        collision.GetComponent<Ball>().color == color)
-    //    {
-    //
-    //    }
-    //}
-
-    private void MergeBalls(BallThrower otherBall)
-    {
-
     }
 }
