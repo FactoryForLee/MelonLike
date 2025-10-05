@@ -9,18 +9,17 @@ public class ObjectPooling<T> : MonoBehaviour where T : Poolobj
 
     private Queue<T> pool = new Queue<T>();
 
-    protected T GetObject()
+    public T GetObject()
     {
         T obj;
         if (pool.Count == 0)
             obj = Instantiate(prefab) as T;
 
-        else
-        {//TODO: 풀링 사용할 때 버그 발생 null ref
+        else//TODO: 풀링 사용할 때 버그 발생 null ref 
             obj = pool.Dequeue();
-            obj.gameObject.SetActive(true);
-        }
+        
 
+        obj.gameObject.SetActive(false);
         obj.OnReturnToPool.AddListener(ReturnToPool);
         return obj;
     }
@@ -30,15 +29,5 @@ public class ObjectPooling<T> : MonoBehaviour where T : Poolobj
         obj.transform.position = Vector2.zero;
         obj.OnReturnToPool.RemoveListener(ReturnToPool);
         pool.Enqueue((T)(obj));
-    }
-}
-
-public class Poolobj : MonoBehaviour
-{
-    public UnityEvent<Poolobj> OnReturnToPool;
-
-    protected void OnDisable()
-    {
-        OnReturnToPool?.Invoke(this);
     }
 }

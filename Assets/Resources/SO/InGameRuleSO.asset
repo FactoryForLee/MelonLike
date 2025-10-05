@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19736630b1fe2f8409241f0c10a55960, type: 3}
-  m_Name: BoundSO
-  m_EditorClassIdentifier: Assembly-CSharp::BoundSO
-  radius: 2.25
-  pointCount: 100
+  m_Script: {fileID: 11500000, guid: b52c4199e2bfbc840962e3898a2750d7, type: 3}
+  m_Name: InGameRuleSO
+  m_EditorClassIdentifier: Assembly-CSharp::InGameRuleSO
+  poolPos: {x: 600, y: 0, z: 0}
