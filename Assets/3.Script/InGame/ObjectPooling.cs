@@ -3,17 +3,17 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ObjectPooling<T> : MonoBehaviour where T : Poolobj
+public class ObjectPooling : MonoBehaviour
 {
-    [SerializeField] private GameObject prefab;
+    [SerializeField] private Poolobj prefab;
 
-    private Queue<T> pool = new Queue<T>();
+    private Queue<Poolobj> pool = new Queue<Poolobj>();
 
-    public T GetObject()
+    public Poolobj GetObject()
     {
-        T obj;
+        Poolobj obj;
         if (pool.Count == 0)
-            obj = Instantiate(prefab) as T;
+            obj = Instantiate(prefab);
 
         else//TODO: 풀링 사용할 때 버그 발생 null ref 
             obj = pool.Dequeue();
@@ -28,6 +28,6 @@ public class ObjectPooling<T> : MonoBehaviour where T : Poolobj
     {
         obj.transform.position = Vector2.zero;
         obj.OnReturnToPool.RemoveListener(ReturnToPool);
-        pool.Enqueue((T)(obj));
+        pool.Enqueue(obj);
     }
 }
