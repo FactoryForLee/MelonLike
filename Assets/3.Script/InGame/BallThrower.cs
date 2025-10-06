@@ -28,7 +28,7 @@ public class BallThrower : MonoBehaviour
     private void OnEnable()
     {
         ball = GetComponent<Ball>();
-        ReloadBall();
+        //ReloadBall();
         UserInput.touchPressAction.started += TouchStarted;
         UserInput.touchPositionAction.performed += TouchPerformed;
         UserInput.touchPressAction.canceled += TouchCanceled;
